@@ -30,7 +30,7 @@ export default function Grain() {
           <feTurbulence
             ref={turbulenceRef}
             type="fractalNoise"
-            baseFrequency="0.90"
+            baseFrequency="0.60"
             numOctaves="5"
             stitchTiles="stitch"
             seed="0"

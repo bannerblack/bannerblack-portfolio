@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Alegreya, Geist_Mono } from "next/font/google";
 import "../globals.css";
 import AuthorProvider from "./AuthorProvider";
 import Grain from "./Grain";
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+
+const alegreya = Alegreya({
+  variable: "--font-alegreya",
   subsets: ["latin"],
+  weight: ["400", "500", "700", "800"],
 });
 
 const geistMono = Geist_Mono({
@@ -26,9 +28,7 @@ export default async function EverythingLayout({
   return (
     <AuthorProvider>
       <Grain />
-      <div
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      <div className={`${alegreya.variable} ${geistMono.variable} antialiased`}>
         <div className="container mx-auto px-4 py-6">{children}</div>
       </div>
     </AuthorProvider>

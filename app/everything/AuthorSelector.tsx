@@ -12,6 +12,7 @@ import {
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
 import { NavigationMenu } from "@/components/ui/navigation-menu";
+import { SwatchesIcon } from "./icons";
 import { NavMenu } from "./NavMenu";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -22,7 +23,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { PaintbrushIcon } from "lucide-react";
+
 interface Author {
   id: string;
   username?: string;
@@ -149,7 +150,7 @@ export default function AuthorSelector({
                 size="icon"
                 variant="outline"
               >
-                <PaintbrushIcon className="h-4 w-4" />
+                <SwatchesIcon />
               </Button>
             )}
           </div>
