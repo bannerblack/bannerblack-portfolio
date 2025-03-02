@@ -1,0 +1,18 @@
+[Intent]
+- This project is a website that acts as a fiction portfolio for developer BlackBanner.
+- It allows users to sign in with Oauth and post stories
+- A user must first add an author that they can publish stories under
+- stories are published, then chapters are added to them.
+- Important: A user can have multiple authors, and which author they are currently viewing the site under will affect the theme, bookmarks, and other account data that is displayed.
+- Authors can have custom themes and preferences.
+
+[Theme]
+- This website uses a slick, modern interface using shadcn components.
+- It offers custom themes that are pulled from the author's custom_theme attribute
+- Uses shadcn and tailwind 4
+
+[Database and Types]
+- Use Database from database.types.ts as reference for all supabase database tables and properties
+
+[Restricted Files]
+- Do not edit middleware, or anything in the login folder. Do not edit supabase files.
