@@ -10,7 +10,11 @@ export async function getUserId() {
     return null;
   }
   console.log("User ID Origin: ", user.id);
-  return user.id;
+  return {
+    user_id: user.id,
+    username: user.user_metadata.username,
+    avatar_url: user.user_metadata.avatar_url,
+  };
 }
 
 // Get all info from user

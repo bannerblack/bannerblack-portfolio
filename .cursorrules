@@ -6,6 +6,14 @@
 - Important: A user can have multiple authors, and which author they are currently viewing the site under will affect the theme, bookmarks, and other account data that is displayed.
 - Authors can have custom themes and preferences.
 
+- ONCE A FEATURE IS IMPLEMENTED, DO NOT ALLOW IT TO GO AWAY
+
+[SSR and Client]
+
+- NO CLIENT FETCHING
+- Everything that can be in a server component should be in a server component
+- Fetch data in ssr components and pass to client components if needed
+
 [Theme]
 - This website uses a slick, modern interface using shadcn components.
 - It offers custom themes that are pulled from the author's custom_theme attribute
@@ -16,3 +24,7 @@
 
 [Restricted Files]
 - Do not edit middleware, or anything in the login folder. Do not edit supabase files.
+
+[FUNCTIONALITY]
+
+- On layout load, the user.id gets the authors for that id. The author that has primary true sets the theme with author.theme   

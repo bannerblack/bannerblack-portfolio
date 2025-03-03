@@ -5,7 +5,13 @@ import { Moon, Sun, Palette, Check } from "lucide-react";
 import { useTheme } from "next-themes";
 import { createClient } from "@/lib/utils/supabase/client";
 import { toast } from "sonner";
+import { updateAuthorTheme } from "@/app/actions/theme-actions";
 import { useRouter } from "next/navigation";
+import {
+  applyTheme,
+  resetTheme,
+  getAllThemeVariables,
+} from "@/lib/utils/theme-utils";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -85,8 +91,9 @@ const THEME_OPTIONS: ThemeOption[] = [
 
 export function ModeToggle() {
   const { setTheme, theme } = useTheme();
-  const [isUpdating, setIsUpdating] = React.useState(false);
   const router = useRouter();
+  const { startLoading, stopLoading } = useLoading();
+  const { currentAuthor, applyAuthorTheme } = useAppContext();
   const [activeTheme, setActiveTheme] = React.useState<string>("system");
 
   // Initialize active theme from current theme
@@ -96,172 +103,88 @@ export function ModeToggle() {
     }
   }, [theme]);
 
-  // Function to revalidate and refresh
-  const revalidateAndRefresh = React.useCallback(() => {
-    console.log("ModeToggle: Revalidating and refreshing...");
-    router.refresh();
-    console.log("ModeToggle: Revalidation triggered");
-  }, [router]);
-
-  const updateAuthorTheme = React.useCallback(
+  const handleThemeChange = React.useCallback(
     async (newTheme: string) => {
-      console.log("updateAuthorTheme called with theme:", newTheme);
-
-      if (isUpdating) {
-        console.log("Already updating, skipping");
-        return;
-      }
-
       try {
-        setIsUpdating(true);
-        console.log("Setting isUpdating to true");
-
-        // Create Supabase client
-        const supabase = createClient();
-        console.log("Supabase client created");
-
-        // Get the current user
-        console.log("Getting current user...");
-        const {
-          data: { user },
-          error: userError,
-        } = await supabase.auth.getUser();
-
-        if (userError || !user) {
-          console.error("Error getting current user:", userError);
-          return;
-        }
-        console.log("Current user found:", user.id);
-
-        // Get the primary author profile for the current user
-        console.log("Getting primary author profile for user:", user.id);
-        let { data: currentAuthor, error: authorError } = await supabase
-          .from("author")
-          .select("*")
-          .eq("user", user.id)
-          .eq("primary", true)
-          .single();
-
-        if (authorError || !currentAuthor) {
-          console.error("Error getting primary author profile:", authorError);
-          // Fallback to any author if no primary author is found
-          const { data: fallbackAuthor, error: fallbackError } = await supabase
-            .from("author")
-            .select("*")
-            .eq("user", user.id)
-            .limit(1)
-            .single();
-
-          if (fallbackError || !fallbackAuthor) {
-            console.error(
-              "Error getting fallback author profile:",
-              fallbackError
-            );
-            toast.error("Could not find an author profile to update");
-            return;
-          }
-
-          console.log("Using fallback author:", fallbackAuthor.id);
-          currentAuthor = fallbackAuthor;
-        }
-
-        console.log(
-          "Author profile found:",
-          currentAuthor.id,
-          "Current theme:",
-          currentAuthor.theme
-        );
-
-        // Check if this is a preset theme
-        const themeOption = THEME_OPTIONS.find((t) => t.id === newTheme);
-        const isPresetTheme = themeOption?.type === "preset";
-        const isBaseTheme =
-          themeOption?.type === "base" || themeOption?.type === "system";
-
-        // Update the author's theme preference
-        console.log(
-          "Updating author theme to:",
-          newTheme,
-          isPresetTheme ? "(preset theme)" : ""
-        );
-
-        // Simply update the theme property - it stores either the preset name or "custom"
-        const { data: updatedData, error: updateError } = await supabase
-          .from("author")
-          .update({
-            theme: newTheme, // Store the actual theme name in the theme property
-          })
-          .eq("id", currentAuthor.id)
-          .select();
-
-        if (updateError) {
-          console.error("Error updating author theme:", updateError);
-          toast.error("Failed to save theme preference");
+        if (!currentAuthor) {
+          toast.error("No author selected");
           return;
         }
 
-        console.log("Theme updated successfully in database:", updatedData);
+        // Start loading with a message
+        startLoading("Changing theme...");
 
-        // Dispatch a custom event to notify other components of the theme change
-        const themeChangedEvent = new CustomEvent("themeChanged", {
-          detail: {
+        // Apply the theme immediately for visual feedback
+        if (typeof applyAuthorTheme === "function") {
+          // Create a temporary author object with the new theme
+          const tempAuthor = {
+            ...currentAuthor,
             theme: newTheme,
-            authorId: currentAuthor.id,
-          },
-        });
-        document.dispatchEvent(themeChangedEvent);
-        console.log("Theme changed event dispatched");
+          };
+          applyAuthorTheme(tempAuthor);
+        } else {
+          // Fallback implementation
+          // First, reset any existing theme
+          resetTheme(getAllThemeVariables());
 
-        console.log("Theme preference saved:", newTheme);
+          // Define available themes for class removal
+          const availableThemeClasses = [
+            "light",
+            "dark",
+            "system",
+            "tokyo-night",
+            "nord",
+            "dracula",
+            "solarized",
+            "custom",
+          ];
+
+          // Remove all theme classes
+          availableThemeClasses.forEach((themeName) => {
+            document.documentElement.classList.remove(themeName);
+          });
+
+          // Apply the new theme
+          document.documentElement.classList.add(newTheme);
+          setTheme(newTheme);
+        }
+
+        // Update the author's theme using our server action
+        const result = await updateAuthorTheme(currentAuthor.id, newTheme);
+
+        if (!result.success) {
+          console.error("Error updating theme:", result.error);
+          toast.error("Failed to save theme preference");
+          stopLoading();
+          return;
+        }
+
+        // Show success message
+        const themeOption = THEME_OPTIONS.find((t) => t.id === newTheme);
         toast.success(`Theme changed to ${themeOption?.name || newTheme}`);
 
-        // Revalidate and refresh
-        revalidateAndRefresh();
+        // Use Next.js router to refresh the page without a hard reload
+        router.refresh();
+
+        // Stop loading after a short delay
+        setTimeout(() => {
+          stopLoading();
+        }, 300);
       } catch (error) {
-        console.error("Error in updateAuthorTheme:", error);
-        toast.error("An error occurred while updating theme");
-      } finally {
-        console.log("Setting isUpdating to false");
-        setIsUpdating(false);
+        console.error("Error changing theme:", error);
+        toast.error("An error occurred while changing theme");
+        stopLoading();
       }
     },
-    [isUpdating, revalidateAndRefresh]
+    [
+      setTheme,
+      router,
+      startLoading,
+      stopLoading,
+      currentAuthor,
+      applyAuthorTheme,
+    ]
   );
-
-  const handleThemeChange = React.useCallback(
-    (newTheme: string) => {
-      console.log("handleThemeChange called with theme:", newTheme);
-      setActiveTheme(newTheme);
-
-      // Set the theme in next-themes
-      setTheme(newTheme);
-      console.log("Theme set in next-themes");
-
-      // Update the author's theme in the database
-      updateAuthorTheme(newTheme);
-
-      // Apply the theme class directly to ensure immediate visual feedback
-      const themeOption = THEME_OPTIONS.find((t) => t.id === newTheme);
-
-      // Remove all theme classes first
-      THEME_OPTIONS.forEach((option) => {
-        if (option.type === "preset" || option.type === "base") {
-          document.documentElement.classList.remove(option.id);
-        }
-      });
-
-      // Add the new theme class if it's a preset or base theme (not system)
-      if (themeOption && themeOption.type !== "system") {
-        document.documentElement.classList.add(newTheme);
-        console.log("Theme class applied to document:", newTheme);
-      }
-    },
-    [setTheme, updateAuthorTheme]
-  );
-
-  // Get the current theme option
-  const currentThemeOption =
-    THEME_OPTIONS.find((t) => t.id === activeTheme) || THEME_OPTIONS[0];
 
   return (
     <DropdownMenu>

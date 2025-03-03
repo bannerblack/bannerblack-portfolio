@@ -23,6 +23,8 @@ import {
   getCurrentTheme,
   getAllThemeVariables,
 } from "@/lib/utils/theme-utils";
+import { updateAuthorCustomTheme } from "@/app/actions/theme-actions";
+import { useRouter } from "next/navigation";
 
 interface Author {
   id: string;
@@ -45,8 +47,10 @@ export default function ThemeEditor({
   onOpenChange,
   onSave,
 }: ThemeEditorProps) {
-  // Initialize theme state from author's custom_theme or current CSS variables
-  const [theme, setTheme] = useState<ThemeVariables>({});
+  const router = useRouter();
+  const { startLoading, stopLoading } = useLoading();
+  const { applyAuthorTheme } = useAppContext();
+  const [theme, setTheme] = useState<ThemeVariables>(author.custom_theme || {});
   const [activeTab, setActiveTab] = useState("base");
   const [previewMode, setPreviewMode] = useState(false);
 
@@ -97,8 +101,21 @@ export default function ThemeEditor({
   // Handle save
   const handleSave = async () => {
     try {
-      // Call the onSave callback
+      // Start loading with a message
+      startLoading("Saving custom theme...");
+
+      // Call the onSave callback for backward compatibility
       onSave(theme);
+
+      // Use the server action to update the theme
+      const result = await updateAuthorCustomTheme(author.id, theme);
+
+      if (!result.success) {
+        console.error("Error saving custom theme:", result.error);
+        toast.error("Failed to save theme");
+        stopLoading();
+        return;
+      }
 
       // Close the dialog
       onOpenChange(false);
@@ -108,9 +125,31 @@ export default function ThemeEditor({
         setPreviewMode(false);
         resetTheme(Object.keys(theme));
       }
+
+      // Apply the theme immediately for visual feedback
+      if (typeof applyAuthorTheme === "function") {
+        // Create a temporary author object with the updated theme
+        const tempAuthor = {
+          ...author,
+          theme: "custom",
+          custom_theme: theme,
+        };
+        applyAuthorTheme(tempAuthor);
+      }
+
+      toast.success("Theme saved successfully");
+
+      // Use Next.js router to refresh the page without a hard reload
+      router.refresh();
+
+      // Stop loading after a short delay
+      setTimeout(() => {
+        stopLoading();
+      }, 300);
     } catch (error) {
       console.error("Error saving theme:", error);
       toast.error("Failed to save theme");
+      stopLoading();
     }
   };
 

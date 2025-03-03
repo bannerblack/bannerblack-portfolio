@@ -1,8 +1,11 @@
 "use server";
 
-import { getUserInfo } from "../query/auth";
-import { getAuthorStories, getAuthorInteractions } from "../query/queries";
-import ThemeTest from "./ThemeTest";
+import { getUserInfo } from "../../../lib/query/auth";
+import {
+  getAuthorStories,
+  getAuthorInteractions,
+} from "../../../lib/query/queries";
+import ThemeTest from "../../ThemeTest";
 import { Button } from "@/components/ui/button";
 import {
   Card,
