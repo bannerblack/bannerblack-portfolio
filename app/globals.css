@@ -9,6 +9,10 @@
   --font-mono: var(--font-geist-mono);
 }
 
+.sidebar-wrapper {
+  width: 300px !important;
+}
+
 .freight-title {
   font-family: "FreightTextProBlack-Italic FreightText Pro";
 }

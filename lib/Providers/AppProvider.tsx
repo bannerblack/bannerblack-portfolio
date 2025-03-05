@@ -1,7 +1,8 @@
 "use client";
 
 import { Database } from "@/database.types";
-import { createContext, useState } from "react";
+import React from "react";
+import { createContext } from "react";
 
 // Primary author uses type author
 type Author = Database["public"]["Tables"]["author"]["Row"];

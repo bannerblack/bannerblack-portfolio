@@ -3,6 +3,8 @@ import { Database } from "@/database.types";
 import Link from "next/link";
 import { AuthorSwitcher } from "./AuthorSwitcher";
 import AuthorContext from "./AuthorContext";
+import { NavMenu } from "@/components/NavMenu";
+
 type Author = Database["public"]["Tables"]["author"]["Row"];
 
 const Nav = ({
@@ -15,15 +17,11 @@ const Nav = ({
   username: string;
 }) => {
   return (
-    <div className="flex flex-row justify-between items-center">
-      <h1 className="text-2xl font-bold">BlackBanner</h1>
-      <AuthorContext avatarUrl={avatarUrl} username={username} />
+    <div className="p-10 flex flex-row justify-center items-center gap-10">
+      <h1 className="freight-title text-5xl font-bold">BlackBanner</h1>
+      <NavMenu />
       <AuthorSwitcher />
-      <div>
-        <button>
-          <Link href="/everything/settings">Settings</Link>
-        </button>
-      </div>
+      <AuthorContext avatarUrl={avatarUrl} username={username} />
     </div>
   );
 };

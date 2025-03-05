@@ -41,7 +41,7 @@ export async function getAuthorStories() {
 
   const { data, error } = await supabase
     .from("author")
-    .select(`*, story(*, chapter(*))`)
+    .select(`*, story(*, chapter(*, content.limit(100)))`)
     .eq("user", userData.user_id);
 
   if (error) {

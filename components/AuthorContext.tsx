@@ -28,7 +28,7 @@ const AuthorDisplay = ({
   }
 
   return (
-    <div id="author-display" className="w-100">
+    <div id="author-display" className="mr-10">
       <div className="flex flex-row items-center gap-4">
         <Avatar className="h-12 w-12">
           <AvatarImage src={avatarUrl} />
