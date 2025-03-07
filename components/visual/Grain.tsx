@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef } from "react";
 
-export default function Grain() {
+export default function Grain({ className }: { className?: string }) {
   const turbulenceRef = useRef<SVGFETurbulenceElement>(null);
 
   useEffect(() => {
@@ -24,7 +24,9 @@ export default function Grain() {
   }, []);
 
   return (
-    <div className="fixed inset-0 pointer-events-none opacity-10">
+    <div
+      className={`fixed inset-0 pointer-events-none opacity-10 ${className}`}
+    >
       <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
         <filter id="grain">
           <feTurbulence

@@ -7,6 +7,17 @@
 @theme {
   --font-sans: var(--font-alegreya);
   --font-mono: var(--font-geist-mono);
+  --text-sm: 16px;
+  --text-base: 18px;
+  --text-lg: 25px;
+  --text-xl: 27px;
+  --text-2xl: 30px;
+  --text-3xl: 35px;
+  --text-4xl: 40px;
+}
+
+body {
+  font-size: 16px;
 }
 
 .sidebar-wrapper {
@@ -30,7 +41,7 @@
   --secondary-foreground: oklch(0.205 0 0);
   --muted: oklch(0.97 0 0);
   --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
+  --accent: oklch(0.6 0.118 184.704);
   --accent-foreground: oklch(0.205 0 0);
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(0.577 0.245 27.325);
@@ -66,7 +77,7 @@
   --secondary-foreground: oklch(0.985 0 0);
   --muted: oklch(0.269 0 0);
   --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
+  --accent: oklch(0.696 0.17 162.48);
   --accent-foreground: oklch(0.985 0 0);
   --destructive: oklch(0.396 0.141 25.723);
   --destructive-foreground: oklch(0.637 0.237 25.331);

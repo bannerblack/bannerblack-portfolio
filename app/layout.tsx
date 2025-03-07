@@ -84,10 +84,10 @@ export default async function EverythingLayout({
         username={userData.username}
       />
 
-      <Grain />
+      <Grain className="z-50" />
 
       <div
-        className={`ml-[12%] h-[100%] px-4 py-6 container antialiased grid grid-cols-12`}
+        className={`ml-[12%] h-[100%] px-4 py-6 container antialiased grid grid-cols-12 mt-40`}
       >
         <SidebarProvider>
           <ScrollArea className="rounded-xl border p-4 ">
@@ -125,7 +125,7 @@ export default async function EverythingLayout({
         </div>
       </div>
 
-      <footer className="fixed bottom-0 left-0 right-0 h-10 border-t p-3 subpixel-antialiased flex flex-row items-center justify-center gap-4 text-muted-foreground font-mono text-sm">
+      <footer className="fixed bottom-0 left-0 right-0 h-10 border-t p-3 subpixel-antialiased flex flex-row items-center justify-center gap-4 text-muted-foreground font-mono text-sm bg-card">
         <div>
           <p>WORDS READ: 2000</p>
         </div>

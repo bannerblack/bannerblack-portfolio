@@ -1,6 +1,6 @@
 import React from "react";
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
-import { TypoH1 } from "./typography";
+import { TypoH1 } from "../../components/visual/typography";
 import { Suspense } from "react";
 import AuthorContext from "../../components/AuthorContext";
 import { getBookmarks } from "../../lib/query/queries";
@@ -92,8 +92,9 @@ const BookmarkCard = ({
           </AccordionContent>
         </AccordionItem>
       </Accordion> */}
+
       {/* ┌───────────────────────────── GREETING ─────────────────────────────────┐ */}
-      <Card className="mb-6">
+      <Card className="mb-18">
         <CardHeader>
           <TypoH1 className="flex flex-row items-center gap-2">
             Welcome to your Dashboard
@@ -107,12 +108,12 @@ const BookmarkCard = ({
         </CardContent>
       </Card>
 
-      <TypoH1 className="flex flex-row items-center gap-2">
+      <TypoH1 className="flex flex-row items-center gap-2 mb-10 border-b border-muted-foreground pb-5">
         <BookmarkIcon />
         Bookmarks
       </TypoH1>
       {bookmarks.map((bookmark) => (
-        <Card className="mt-6" key={bookmark.bookmark.id}>
+        <Card className="mb-15" key={bookmark.bookmark.id}>
           {/* ┌───────────────────────────── TOP ─────────────────────────────────┐ */}
           <CardHeader className="flex flex-row justify-start items-center">
             {/* Story Title */}

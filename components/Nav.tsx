@@ -17,7 +17,7 @@ const Nav = ({
   username: string;
 }) => {
   return (
-    <div className="p-10 flex flex-row justify-center items-center gap-10">
+    <div className="p-10 h-30 flex flex-row justify-center items-center gap-10 border-b border-muted-foreground fixed top-0 left-0 right-0 bg-background z-50">
       <h1 className="freight-title text-5xl font-bold">BlackBanner</h1>
       <NavMenu />
       <AuthorSwitcher />
